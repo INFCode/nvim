@@ -1,5 +1,5 @@
 "set leader as ;
-let mapleader = ';'
+let mapleader = '"'
 
 "turn the word into upper case
 inoremap <leader>u <esc>bgUwea

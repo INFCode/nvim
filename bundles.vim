@@ -1,14 +1,15 @@
+"download vim-plug if not exist
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
       \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 endif
 
-call plug#begin('~/.vim/plugged')	"run vim-plug, all plugins should be after it
+call plug#begin('~/.nvim/plugged')	"run vim-plug, all plugins should be after it
 "-----------------------------------
 Plug 'vim-scripts/vim-plug'			"let vim-plug manage itself
 Plug 'scrooloose/nerdtree'			"NERDTree, help to manage the files
 Plug 'Chiel92/vim-autoformat'		"format the code, make it prettier
-Plug 'dense-analysis/ale'			"ale format check
+"Plug 'dense-analysis/ale'			"ale format check
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 "									"conqure of completion
 Plug 'lervag/vimtex'				"latex support
@@ -17,9 +18,10 @@ Plug 'sirver/ultisnips'				"snippets support
 Plug 'dhruvasagar/vim-table-mode'   "modify the table in .md file
 Plug 'rust-lang/rust.vim'			"rust support
 Plug 'crusoexia/vim-monokai'		"monokai color scheme
-Plug 'jiangmiao/auto-pairs'			"pairing the brackets
+"Plug 'jiangmiao/auto-pairs'			"pairing the brackets
 Plug 'rhysd/accelerated-jk'			"accelerate as j/k is continuously pressed
-""Plug 'ludovicchabant/vim-gutentags' "the plugin that makes ctags easier to use
+"Plug 'ludovicchabant/vim-gutentags' "the plugin that makes ctags easier to use
+Plug 'yggdroot/indentLine'			"add visible indentlines
 "-----------------------------------
 call plug#end()					    "stop vim-plug, all plugins should be
 									"added before this line
@@ -91,28 +93,10 @@ let g:ale_linters = {
 noremap <LEADER>g :ALEGoToDefinition
 
 "-- settings for coc --
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+" The settings can be found in coc.vim
+call g:LoadConfig(stdpath('config') . "/coc.vim" )
 
 "-- settings for vimtex --
-"make the settings work for plain tex file
-let g:tex_flavor = 'latex'
-" the setting for latex is defined in file .vimrc.tex
-if filereadable(expand('~/.vimrc.texsets'))
-	source ~/.vimrc.texsets
-endif
 
 "-- settings for Ultisnips --
 " set tab as the key to trigger the expand
@@ -149,5 +133,12 @@ let g:accelerated_jk_acceleration_table = [4, 8, 16, 32]
 nmap j <Plug>(accelerated_jk_gj)
 nmap k <Plug>(accelerated_jk_gk)
 
-
 let g:AutoPairsMapCh=0
+
+" use monokai
+colorscheme monokai		"use the color scheme 'monokai'
+
+" settings for indentLine
+let g:indentLine_enabled = 0	" 先关掉
+let g:indent_guides_guide_size   = 1  " 指定对齐线的尺寸
+let g:indent_guides_start_level  = 2  " 从第二层开始可视化显示缩进
