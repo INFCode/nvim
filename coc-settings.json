@@ -13,5 +13,6 @@
         }
       }
     }
-  }
+  },
+  "rust-analyzer.serverPath": "/usr/bin/rust-analyzer"
 }

@@ -1,0 +1,34 @@
+# moving
+z<CR>	or zt	redraw, current line at top of window
+z.		or zz	redraw, current line at center of window
+
+# find pairing
+%		find the next brace, bracket, comment, or "#if"/
+		   "#else"/"#endif" in this line and go to its match
+
+# Jumping
+N CTRL-O	go to Nth older position in jump list
+`.			go to the position of the last change in this file
+
+# window moving
+N  CTRL-E	window N lines downwards (default: 1)
+N  CTRL-D	window N lines Downwards (default: 1/2 window)
+N  CTRL-F	window N pages Forwards (downwards)
+N  CTRL-Y	window N lines upwards (default: 1)
+N  CTRL-U	window N lines Upwards (default: 1/2 window)
+N  CTRL-B	window N pages Backwards (upwards)
+
+# Insert mode shortcut
+CTRL-O {command}  execute {command} and return to Insert mode
+
+# change indent
+CTRL-T		  insert one shiftwidth of indent in front of
+		       the current line
+CTRL-D		  delete one shiftwidth of indent in front of
+		     the current line
+0 CTRL-D	  delete all indent in the current line (Seems not work)
+^ CTRL-D	  delete all indent in the current line,
+				restore indent in next line(Seems not work)
+
+# Delete
+N  D		delete to the end of the line (and N-1 more lines)
