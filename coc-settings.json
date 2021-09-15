@@ -1,18 +1,24 @@
 {
-  "languageserver": {
-    "ccls": {
-      "command": "ccls",
-      "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
-      "rootPatterns": [".ccls-root", "compile_commands.json"],
-      "initializationOptions": {
-        "cache": {
-          "directory": ".ccls-cache"
-        },
-        "client": {
-          "snippetSupport": true
-        }
-      }
-    }
-  },
-  "rust-analyzer.serverPath": "/usr/bin/rust-analyzer"
+	"coc.preferences.formatOnSaveFiletypes": [
+		"rust",
+		"json",
+		"toml",
+		"cpp",
+		"c"
+	],
+	"rust-analyzer.serverPath": "/usr/bin/rust-analyzer",
+	"rust-analyzer.checkOnSave.allTargets": false,
+	"rust-analyzer.updates.channel": "nightly",
+	"cSpell.enabledLanguageIds": [
+		"tex",
+		"latex",
+		"markdown",
+		"txt",
+		"plaintext"
+	],
+	"cSpell.userWords": [
+		"getchar",
+		"putchar",
+		"syscall"
+	]
 }

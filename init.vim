@@ -1,7 +1,7 @@
 "vim settings
 
 set number				"use line number
-set relativenumber		"use relative lin number
+set relativenumber		"use relative line number
 set hlsearch			"highlight the words found when searching
 set backspace=2			"allow vim use backspace to delete characters
 set autoindent			"follow the same indent of the line before
@@ -19,7 +19,6 @@ set incsearch			"jump to the first result that match what you
 						"search immediately as you input each character
 set autoread			"inform me if the file is edit by other programs
 						"eg. other editors
-set nocompatible		"let vim be vi improved
 syntax enable			"support syntax highlight
 syntax on				"turn on the syntax highlight
 if has('nvim')
@@ -36,8 +35,11 @@ set whichwrap=b,s,h,l,[,]
 						"2.left,right in insert/replace mode
 set clipboard+=unnamedplus
 
+set hidden				"allow to hide a modified buffer
+
 filetype plugin indent on
 						" filetype specific support
+let mapleader = "'"     "set leader as '
 
 " terminal (work only in vim 8)
 fun! ToggleTerminal()
@@ -50,7 +52,7 @@ endfunc
 
 " Load configs in other files
 " The loading function
-fun! g:LoadConfig(filename)
+func! g:LoadConfig(filename)
 	if filereadable(expand(a:filename))
 		exec "source ". a:filename
 	else

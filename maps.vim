@@ -1,15 +1,9 @@
-"set leader as ;
-let mapleader = '"'
-
 "turn the word into upper case
+noremap <leader>u bgUwea<esc>
 inoremap <leader>u <esc>bgUwea
-"open file .vimrc
-nnoremap <leader>ev :vsplit $MYVIMRC.maps<CR>
 
 "use jk as esc
 inoremap jk <esc>
-"stop using esc itself(use jk instead)
-"inoremap <esc> <nop>
 
 "stop using direction keys in any mode (switch to normal mode and use hjkl instead) 
 noremap <up> <nop>
