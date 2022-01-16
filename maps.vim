@@ -4,6 +4,8 @@ inoremap <leader>u <esc>bgUwea
 
 "use jk as esc
 inoremap jk <esc>
+"use leader h to remove highlight
+noremap <leader>h :nohl<CR>
 
 "stop using direction keys in any mode (switch to normal mode and use hjkl instead) 
 noremap <up> <nop>

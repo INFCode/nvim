@@ -19,6 +19,7 @@ set incsearch			"jump to the first result that match what you
 						"search immediately as you input each character
 set autoread			"inform me if the file is edit by other programs
 						"eg. other editors
+set inccommand=nosplit	"show the effects of commands incrimentally
 syntax enable			"support syntax highlight
 syntax on				"turn on the syntax highlight
 if has('nvim')
@@ -37,6 +38,8 @@ set clipboard+=unnamedplus
 
 set hidden				"allow to hide a modified buffer
 
+set mouse=a				"enable mouse support
+
 filetype plugin indent on
 						" filetype specific support
 let mapleader = "'"     "set leader as '
@@ -47,6 +50,9 @@ fun! ToggleTerminal()
 	resize 5
 	:call term_start('bash',{'curwin':1,'term_finish': 'close'})
 endfunc
+
+" support for OCaml ocp-indent
+set rtp^="/home/infcode/.opam/eecs490/share/ocp-indent/vim"
 
 "autocmd BufWritePost $MYVIMRC source $MYVIMRC
 

@@ -19,7 +19,10 @@ Plug 'crusoexia/vim-monokai'		"monokai color scheme
 Plug 'rhysd/accelerated-jk'			"accelerate as j/k is continuously pressed
 Plug 'yggdroot/indentLine'			"add visible indentlines
 Plug 'tonyfettes/ccount.vim'		"count words in a file
+Plug 'christoomey/vim-tmux-navigator'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
+Plug 'lukas-reineke/indent-blankline.nvim'
 "-----------------------------------
 call plug#end()					    "stop vim-plug, all plugins should be
 									"added before this line
@@ -70,3 +73,19 @@ let g:indent_guides_start_level  = 2  " 从第二层开始可视化显示缩进
 " specify browser to open preview page
 " default: ''
 let g:mkdp_browser = 'firefox'
+
+lua<<EOF
+require'nvim-treesitter.configs'.setup {
+	ensure_installed = { 'toml' },
+	highlight = {
+		enable = true,
+	},
+}
+require'indent_blankline'.setup {
+	char = '▏'
+}
+EOF
+
+let g:indent_blankline_max_indent_increase = 1
+let g:indent_blankline_char_list = ['▏', '┆', '┊']
+let g:indent_blankline_show_first_indent_level = v:false
