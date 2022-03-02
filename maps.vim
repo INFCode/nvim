@@ -31,5 +31,3 @@ iabbrev mian main
 iabbrev ture true
 iabbrev usingn using namespace std;
 
-"-- maps for Rust --
-nmap <leader>f :Autoformat<CR>

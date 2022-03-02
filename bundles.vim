@@ -89,3 +89,6 @@ EOF
 let g:indent_blankline_max_indent_increase = 1
 let g:indent_blankline_char_list = ['▏', '┆', '┊']
 let g:indent_blankline_show_first_indent_level = v:false
+
+"-- maps for vim-autoformat--
+"nmap <leader>f :Autoformat<CR>
