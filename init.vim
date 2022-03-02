@@ -35,6 +35,7 @@ set whichwrap=b,s,h,l,[,]
 						"  mode
 						"2.left,right in insert/replace mode
 set clipboard+=unnamedplus
+						"use system clipboard. xclip required.
 
 set hidden				"allow to hide a modified buffer
 

@@ -30,7 +30,7 @@ call plug#end()					    "stop vim-plug, all plugins should be
 "-- Settings for NERDTree --
 let g:NERDTreeWinSize = 25 "设定 NERDTree 视窗大小
 "开启/关闭nerdtree快捷键
-map <C-f> :NERDTreeToggle<CR>
+map <C-n> :NERDTreeToggle<CR>
 "let NERDTreeShowBookmarks=1  " 开启Nerdtree时自动显示Bookmarks
 "打开vim时如果没有文件自动打开NERDTree
 "autocmd VimEnter * if !argc()|:NERDTree|endif

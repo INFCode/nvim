@@ -30,4 +30,3 @@ nnoremap <bs> i<bs>
 iabbrev mian main
 iabbrev ture true
 iabbrev usingn using namespace std;
-
