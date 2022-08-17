@@ -23,6 +23,9 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'preservim/vim-pencil'			"provide soft & hard warpping which is helpful for writing in vim
+Plug 'jalvesaq/Nvim-R', {'branch': 'stable'} " R support
+Plug 'airblade/vim-gitgutter'		" git diff display
 "-----------------------------------
 call plug#end()					    "stop vim-plug, all plugins should be
 									"added before this line
@@ -92,3 +95,6 @@ let g:indent_blankline_show_first_indent_level = v:false
 
 "-- maps for vim-autoformat--
 "nmap <leader>f :Autoformat<CR>
+
+"-- vim-gitgutter --
+let g:gitgutter_sign_removed = '-'

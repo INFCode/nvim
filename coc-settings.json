@@ -1,26 +1,9 @@
 {
-	"toml.semanticTokens": true,
 	"coc.preferences.formatOnSaveFiletypes": [
-		"rust",
-		"json",
-		"toml",
 		"cpp",
-		"c"
+		"rust",
+		"markdown"
 	],
-	"rust-analyzer.serverPath": "/usr/bin/rust-analyzer",
-	"rust-analyzer.checkOnSave.allTargets": false,
-	"rust-analyzer.updates.channel": "nightly",
-	"cSpell.enabledLanguageIds": [
-		"tex",
-		"latex",
-		"markdown",
-		"txt",
-		"plaintext"
-	],
-	"cSpell.userWords": [
-		"getchar",
-		"putchar",
-		"syscall"
-	],
+	"toml.semanticTokens": true,
 	"rust-analyzer.server.path": "/usr/bin/rust-analyzer"
 }
