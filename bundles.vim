@@ -26,6 +26,7 @@ Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'preservim/vim-pencil'			"provide soft & hard warpping which is helpful for writing in vim
 Plug 'jalvesaq/Nvim-R', {'branch': 'stable'} " R support
 Plug 'airblade/vim-gitgutter'		" git diff display
+Plug 'untitled-ai/jupyter_ascending.vim' " jupyter support
 "-----------------------------------
 call plug#end()					    "stop vim-plug, all plugins should be
 									"added before this line
@@ -39,6 +40,14 @@ map <C-n> :NERDTreeToggle<CR>
 "autocmd VimEnter * if !argc()|:NERDTree|endif
 "if vim is turned on with a file, put the curser in the file(this command fails)
 "autocmd VimEnter * if argc()|:b#|endif
+" Start NERDTree when Vim is started without file arguments.
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+" If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
+autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+    \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
 "if NERDTree is the last window,  turn off vim
 "autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | :q | endif
 "set the icon used in NERDTree
@@ -98,3 +107,13 @@ let g:indent_blankline_show_first_indent_level = v:false
 
 "-- vim-gitgutter --
 let g:gitgutter_sign_removed = '-'
+
+let g:OmniSharp_server_use_mono = 1
+
+" -- vim-pencil
+let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
+augroup pencil
+  autocmd!
+  autocmd FileType markdown,mkd call pencil#init()
+  autocmd FileType text         call pencil#init({'wrap': 'hard'})
+augroup END

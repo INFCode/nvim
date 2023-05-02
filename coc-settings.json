@@ -2,8 +2,31 @@
 	"coc.preferences.formatOnSaveFiletypes": [
 		"cpp",
 		"rust",
-		"markdown"
+		"markdown",
+		"python"
 	],
-	"toml.semanticTokens": true,
-	"rust-analyzer.server.path": "/usr/bin/rust-analyzer"
+  "toml.semanticTokens": true,
+  "rust-analyzer.server.path": "/usr/bin/rust-analyzer",
+  "texlab.build.onSave": true,
+  "cSpell.userWords": [
+    "Backpropagation",
+    "Grayscale",
+    "convolutional",
+    "overfitted",
+    "overfitting",
+    "uniqname"
+  ],
+  "cSpell.enabledLanguageIds": [
+	  "plaintext",
+	  "markdown",
+	  "tex"
+  ],
+  "markdownlint.config": {
+	  "line-length": false
+  },
+  "python.formatting.provider": "black",
+  "python.formatting.blackPath": "/home/infcode/.local/bin/black",
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "omnisharp.version": "v1.38.0"
 }

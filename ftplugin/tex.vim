@@ -1,5 +1,9 @@
 "vim config for latex
 
+" set tab 
+setlocal shiftwidth=2
+setlocal tabstop=2
+
 " consider the .tex file as latex file as default
 let g:tex_flavor = 'latex'
 
