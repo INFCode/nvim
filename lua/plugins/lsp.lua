@@ -54,11 +54,23 @@ return {
 			end,
 		},
 		config = function(_, opts)
-			-- key mappings
 			vim.api.nvim_create_autocmd('LspAttach', {
 				group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-				callback = opts.keymap
+				callback = function(env)
+					-- key mappings
+					opts.keymap(env)
+
+					-- format on save
+					vim.api.nvim_create_autocmd("BufWritePre", {
+						buffer = env.buf,
+						callback = function()
+							vim.lsp.buf.format { async = false, id = env.data.client_id }
+						end,
+					})
+				end
 			})
+
+
 			-- load all servers
 			local servers = opts.servers
 
