@@ -89,5 +89,14 @@ return {
 				}
 			}
 		end
+	},
+	{
+		"zbirenbaum/copilot.lua",
+		opts = {
+			filetypes = {
+				markdown = true,
+				help = true,
+			},
+		}
 	}
 }
