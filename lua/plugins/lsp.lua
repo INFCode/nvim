@@ -7,12 +7,21 @@ return {
 		},
 		opts = {
 			capabilities = {},
+			codelens = {
+				enable = true
+			},
+			inlay_hint = {
+				enable = true
+			},
 			servers = {
 				lua_ls = {
 					settings = {
 						Lua = {
-							diagnostics = {
-								globals = { 'vim' }
+							codeLens = {
+								enable = true,
+							},
+							hint = {
+								enable = true,
 							}
 						}
 					}
@@ -70,7 +79,6 @@ return {
 				end
 			})
 
-
 			-- load all servers
 			local servers = opts.servers
 
@@ -89,8 +97,29 @@ return {
 				all_mlsp_servers = vim.tbl_keys(require("mason-lspconfig.mappings.server").lspconfig_to_package)
 			end
 
+			local on_attach = function(client, bufnr)
+				-- inlay hint
+				if opts.inlay_hint.enable and client.supports_method("textDocument/inlayHint", { bufnr = bufnr }) then
+					vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+				end
+				-- code lens
+				if opts.codelens.enable and client.supports_method("textDocument/codeLens", { bufnr = bufnr }) then
+					vim.lsp.codelens.refresh({ bufnr = bufnr })
+					vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
+						buffer = bufnr,
+						callback = function()
+							vim.lsp.codelens.refresh({ bufnr = bufnr })
+						end,
+					})
+				end
+			end
+
 			local function setup(server)
-				require("lspconfig")[server].setup({ settings = servers[server], capabilities = capabilities })
+				require("lspconfig")[server].setup({
+					settings = servers[server].settings or {},
+					capabilities = capabilities,
+					on_attach = on_attach
+				})
 			end
 
 			local ensure_installed = {}
