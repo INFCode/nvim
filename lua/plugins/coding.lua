@@ -64,7 +64,7 @@ return {
 					end, { "i", "s" }
 					),
 					['<S-Tab>'] = cmp.mapping(function(fallback)
-						if vim.snippets.active({ direction = -1 }) then
+						if vim.snippet.active({ direction = -1 }) then
 							vim.snippet.jump(-1)
 						elseif cmp.visible() then
 							cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
@@ -76,10 +76,10 @@ return {
 				}),
 				sources = cmp.config.sources({
 					{ name = 'nvim_lsp' },
-					{ name = 'snippets' , max_item_count = 5},
-					{ name = 'lazydev', group_index = 0},
+					{ name = 'snippets', max_item_count = 5 },
+					{ name = 'lazydev',  group_index = 0 },
 					--{ name = 'treesitter' },
-					{ name = 'path',    keyword_length = 1 },
+					{ name = 'path',     keyword_length = 1 },
 					{ name = 'calc' },
 				}, {
 					{ name = 'buffer' },
