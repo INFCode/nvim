@@ -46,4 +46,5 @@ if vim.g.vscode then
 else
     -- normal neovim config
     require("deps")
+	require("autocmd")
 end
