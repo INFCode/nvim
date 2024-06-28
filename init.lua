@@ -29,7 +29,10 @@ set.wrap = false
 set.splitright = true
 
 -- clipboard
-vim.opt.clipboard:append({"unnamedplus"})
+if vim.fn.has('clipboard') then
+	-- clipboard provider avaiable
+	vim.opt.clipboard:append({ "unnamedplus" })
+end
 
 -- key mapping
 local map = vim.keymap.set
@@ -37,10 +40,6 @@ vim.g.mapleader = "'"
 
 map("i", "jk", "<esc>")
 map("n", "<leader>h", "<cmd>nohl<cr>")
-
-if vim.loop.os_uname().sysname == "Linux" then
-    vim.opt.clipboard:append({"unnamedplus"})
-end
 
 if vim.g.vscode then
     -- VSCode vim extension
