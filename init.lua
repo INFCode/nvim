@@ -42,9 +42,10 @@ map("i", "jk", "<esc>")
 map("n", "<leader>h", "<cmd>nohl<cr>")
 
 if vim.g.vscode then
-    -- VSCode vim extension
+	-- VSCode vim extension
 else
-    -- normal neovim config
-    require("deps")
+	-- normal neovim config
+	require("utils") -- this defines the _G.Utils, so it must go first
+	require("deps")
 	require("autocmd")
 end
