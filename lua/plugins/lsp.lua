@@ -11,7 +11,7 @@ return {
 				enable = true
 			},
 			inlay_hint = {
-				enable = true
+				enable = false
 			},
 			servers = {
 				lua_ls = {
@@ -21,7 +21,7 @@ return {
 								enable = true,
 							},
 							hint = {
-								enable = true,
+								enable = false,
 							}
 						}
 					}
