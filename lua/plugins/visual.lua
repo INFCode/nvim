@@ -3,6 +3,9 @@ return {
 		"loctvl842/monokai-pro.nvim",
 		opts = {
 			filter = "spectrum",
+			background_clear = {
+				"float_win"
+			}
 		},
 		config = function(_, opts)
 			require("monokai-pro").setup(opts)

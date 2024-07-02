@@ -4,6 +4,7 @@ return {
 		dependencies = {
 			"mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
+			"nui.nvim"
 		},
 		opts = {
 			capabilities = {},
@@ -37,6 +38,57 @@ return {
 			keymap = function(ev)
 				local opts = { buffer = ev.buf }
 				local setmap = vim.keymap.set
+
+				local nui = require('nui.input')
+				local event = require('nui.utils.autocmd').event
+
+				-- create the window
+				local function rename_symbol()
+					local current_name = vim.fn.expand('<cword>')
+					local params = vim.lsp.util.make_position_params()
+
+					local input = nui({
+						-- put the input box 1 row lower than current line
+						relative = 'cursor',
+						position = {
+							row = 2,
+							col = 0,
+						},
+						size = {
+							width = 20,
+							height = 1,
+						},
+						border = {
+							style = "rounded",
+							text = {
+								top = "[Rename]",
+								top_align = "center",
+							},
+						},
+						win_options = {
+							winhighlight = "Normal:Normal,FloatBoarder:SpecialChar",
+						}
+					}, {
+						prompt = "> ",
+						default_value = current_name,
+						on_submit = function(new_name)
+							if not new_name or #new_name == 0 or new_name == current_name then
+								return
+							end
+							params.newName = new_name
+							vim.lsp.buf.rename(new_name, nil)
+							vim.notify("Renamed " .. current_name .. " to " .. new_name)
+						end,
+					})
+
+					-- enable the input window
+					input:mount()
+
+					-- close when the cursor leaves or press esc in normal mode
+					input:on(event.BufLeave, input.input_props.on_close, { once = true })
+					input:map("n", "<esc>", input.input_props.on_close, { noremap = true })
+				end
+
 				setmap('n', 'gD', vim.lsp.buf.declaration, opts)
 				setmap('n', 'gd', vim.lsp.buf.definition, opts)
 				setmap('n', 'K', vim.lsp.buf.hover, opts)
@@ -48,7 +100,7 @@ return {
 					print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
 				end, opts)
 				setmap('n', '<leader>D', vim.lsp.buf.type_definition, opts)
-				setmap('n', '<leader>rn', vim.lsp.buf.rename, opts)
+				setmap('n', '<leader>rn', rename_symbol, opts)
 				setmap({ 'n', 'v' }, '<leader>aw', vim.lsp.buf.code_action, opts)
 				setmap('n', 'gr', vim.lsp.buf.references, opts)
 				setmap('n', '<leader>F', function()
