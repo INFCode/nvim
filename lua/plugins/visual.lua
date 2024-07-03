@@ -17,39 +17,42 @@ return {
 		"lukas-reineke/indent-blankline.nvim",
 		main = "ibl",
 		opts = function()
-			local palette = require("monokai-pro.colorscheme").base
+			local lighten = require("monokai-pro.color_helper").lighten
 
-			local color_map = {
-				-- rainbow indent
-				{ hl_group = "IblIndent1", color = palette.dark },
-				{ hl_group = "IblIndent2", color = palette.green },
-				{ hl_group = "IblIndent3", color = palette.cyan },
-				{ hl_group = "IblIndent4", color = palette.magenta },
-				{ hl_group = "IblIndent5", color = palette.blue },
-				{ hl_group = "IblIndent6", color = palette.red },
-				-- scope color
-				{ hl_group = "IblScope",   color = palette.yellow },
-			}
+			local function get_fg_color(hl_group)
+				local hl = vim.api.nvim_get_hl(0, { name = hl_group })
 
-			local hooks = require("ibl.hooks")
-			hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-				for _, group in ipairs(color_map) do
-					vim.api.nvim_set_hl(0, group.hl_group, { fg = group.color })
-				end
-			end)
-
-			local hl_groups = {}
-			for _, group in pairs(color_map) do
-				if vim.startswith(group.hl_group, "IblIndent") then
-					table.insert(hl_groups, group.hl_group)
+				if hl and hl.fg then
+					return string.format("#%06x", hl.fg)
+				else
+					return "NONE"
 				end
 			end
 
+			local hl_monokai = {}
+			local hl_light_monokai = {}
+			local monokai_hl_group_prefix = "IndentBlankLineIndent"
+			local light_hl_group_prefix = "IndentBlankLineScope"
+			for i = 1, 6 do
+				local indent_color_group = monokai_hl_group_prefix .. i
+				local scope_color_group = light_hl_group_prefix .. i
+				table.insert(hl_monokai, indent_color_group)
+				local hex = get_fg_color(indent_color_group)
+				local lighten_hex = lighten(hex, 60)
+				vim.api.nvim_set_hl(0, scope_color_group, { fg = lighten_hex })
+				table.insert(hl_light_monokai, scope_color_group)
+			end
+
+
 			return {
 				indent = {
-					highlight = hl_groups,
+					highlight = hl_monokai,
 					char = "▏",
 					smart_indent_cap = true,
+				},
+				scope = {
+					highlight = hl_light_monokai,
+					char = '▎',
 				}
 			}
 		end
