@@ -55,6 +55,9 @@ return {
 					node_decremental = "<C-m>",
 				},
 			},
+			highlight = {
+				enable = true,
+			},
 			textobjects = {
 				move = {
 					enable = true,
