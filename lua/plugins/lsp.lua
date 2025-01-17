@@ -2,8 +2,7 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
-			"mason.nvim",
-			"williamboman/mason-lspconfig.nvim",
+			"mason-lspconfig.nvim",
 			"nui.nvim"
 		},
 		opts = {
@@ -143,11 +142,8 @@ return {
 				opts.capabilities or {}
 			)
 
-			local have_mlsp, mlsp = pcall(require, "mason-lspconfig")
-			local all_mlsp_servers = {}
-			if have_mlsp then
-				all_mlsp_servers = vim.tbl_keys(require("mason-lspconfig.mappings.server").lspconfig_to_package)
-			end
+			local mlsp = require("mason-lspconfig")
+			local all_mlsp_servers = vim.tbl_keys(require("mason-lspconfig.mappings.server").lspconfig_to_package)
 
 			local on_attach = function(client, bufnr)
 				-- inlay hint
@@ -178,8 +174,8 @@ return {
 			for server, server_opts in pairs(servers) do
 				if server_opts then
 					server_opts = server_opts == true and {} or server_opts
-					-- run manual setup if mason is not true or if this is a server that cannot be installed with mason-lspconfig
-					if server_opts.mason ~= true or not vim.tbl_contains(all_mlsp_servers, server) then
+					-- run manual setup if mason is false or if this is a server that cannot be installed with mason-lspconfig
+					if server_opts.mason == false or not vim.tbl_contains(all_mlsp_servers, server) then
 						setup(server)
 					elseif server_opts.enabled ~= false then
 						ensure_installed[#ensure_installed + 1] = server
@@ -187,16 +183,22 @@ return {
 				end
 			end
 
-			if have_mlsp then
-				mlsp.setup({
-					ensure_installed = ensure_installed,
-					handlers = { setup },
-				})
-			end
+			mlsp.setup({
+				ensure_installed = ensure_installed,
+				automatic_installation = false,
+				handlers = { setup },
+			})
 		end
 	},
 	{
+		"williamboman/mason-lspconfig.nvim",
+		dependencies = {
+			"williamboman/mason.nvim",
+		}
+	},
+	{
 		"williamboman/mason.nvim",
+		opts = {} -- Tell lazy.nvim to run require("mason").setup() for me
 	},
 	{
 		"folke/lazydev.nvim",
