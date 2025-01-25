@@ -91,6 +91,7 @@ return {
 		end
 	},
 	{
+		-- TODO: use avante.nvim instead
 		"zbirenbaum/copilot.lua",
 		opts = {
 			filetypes = {

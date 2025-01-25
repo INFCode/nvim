@@ -32,10 +32,14 @@ return {
 					settings = {
 						['rust-analyzer'] = {},
 					},
-				}
+				},
+				ruff = {
+					-- ruff is installed with uv, so mason should not install a duplication
+					mason = false,
+				},
 			},
-			keymap = function(ev)
-				local opts = { buffer = ev.buf }
+			keymap = function(env)
+				local opts = { buffer = env.buf }
 				local setmap = vim.keymap.set
 
 				local nui = require('nui.input')
