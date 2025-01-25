@@ -49,4 +49,5 @@ else
 	require("diagnostic").setup()
 	require("deps")
 	require("autocmd")
+	require("terminal").setup()
 end
