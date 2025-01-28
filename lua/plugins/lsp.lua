@@ -1,3 +1,32 @@
+local on_ls_attach_meta = function(enable_inlay_hint, enable_codelens)
+	local on_attach = function(client, bufnr)
+		-- inlay hint
+		if enable_inlay_hint and client.supports_method("textDocument/inlayHint", { bufnr = bufnr }) then
+			vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+		end
+		-- code lens
+		if enable_codelens and client.supports_method("textDocument/codeLens", { bufnr = bufnr }) then
+			vim.lsp.codelens.refresh({ bufnr = bufnr })
+			vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
+				buffer = bufnr,
+				callback = function()
+					vim.lsp.codelens.refresh({ bufnr = bufnr })
+				end,
+			})
+		end
+		-- format on save
+		if client.supports_method("textDocument/formatting") then
+			vim.api.nvim_create_autocmd("BufWritePre", {
+				buffer = bufnr,
+				callback = function()
+					vim.lsp.buf.format({ async = false, id = client.id })
+				end,
+			})
+		end
+	end
+	return on_attach
+end
+
 return {
 	{
 		"neovim/nvim-lspconfig",
@@ -33,10 +62,11 @@ return {
 						['rust-analyzer'] = {},
 					},
 				},
-				ruff = {
-					-- ruff is installed with uv, so mason should not install a duplication
-					mason = false,
-				},
+				basedpyright = {
+					handlers = {
+						['textDocument/publishDiagnostics'] = function() end
+					}
+				}
 			},
 			keymap = function(env)
 				local opts = { buffer = env.buf }
@@ -123,16 +153,10 @@ return {
 				callback = function(env)
 					-- key mappings
 					opts.keymap(env)
-
-					-- format on save
-					vim.api.nvim_create_autocmd("BufWritePre", {
-						buffer = env.buf,
-						callback = function()
-							vim.lsp.buf.format { async = false, id = env.data.client_id }
-						end,
-					})
 				end
 			})
+
+			local on_ls_attach = on_ls_attach_meta(opts.inlay_hint.enable, opts.codelens.enable)
 
 			-- load all servers
 			local servers = opts.servers
@@ -149,28 +173,17 @@ return {
 			local mlsp = require("mason-lspconfig")
 			local all_mlsp_servers = vim.tbl_keys(require("mason-lspconfig.mappings.server").lspconfig_to_package)
 
-			local on_attach = function(client, bufnr)
-				-- inlay hint
-				if opts.inlay_hint.enable and client.supports_method("textDocument/inlayHint", { bufnr = bufnr }) then
-					vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-				end
-				-- code lens
-				if opts.codelens.enable and client.supports_method("textDocument/codeLens", { bufnr = bufnr }) then
-					vim.lsp.codelens.refresh({ bufnr = bufnr })
-					vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
-						buffer = bufnr,
-						callback = function()
-							vim.lsp.codelens.refresh({ bufnr = bufnr })
-						end,
-					})
-				end
-			end
-
 			local function setup(server)
 				require("lspconfig")[server].setup({
 					settings = servers[server].settings or {},
 					capabilities = capabilities,
-					on_attach = on_attach
+					on_attach = function(client, bufnr)
+						if type(servers[server].on_attach) == "function" then
+							servers[server].on_attach(client, bufnr)
+						end
+						on_ls_attach(client, bufnr)
+					end,
+					handlers = servers[server].handlers or {}
 				})
 			end
 
@@ -203,6 +216,34 @@ return {
 	{
 		"williamboman/mason.nvim",
 		opts = {} -- Tell lazy.nvim to run require("mason").setup() for me
+	},
+	{
+		-- LSP hooks to make custom LS from non-LS tools
+		"nvimtools/none-ls.nvim",
+		dependencies = {
+			"nvimtools/none-ls-extras.nvim",
+			"nvim-lua/plenary.nvim"
+		},
+		opts = function()
+			local null_ls = require("null-ls")
+			-- Sources of fake LS
+			local sources = {
+				-- ruff autofix by ruff check --fix
+				require("none-ls.formatting.ruff").with({ extra_args = { "--extend-select", "I" } }),
+				-- ruff formatter
+				require("none-ls.formatting.ruff_format"),
+				-- ruff diagnostics
+				require("none-ls.diagnostics.ruff"),
+			}
+
+			local opts = {
+				debug = true, -- Inspect with :NullLsLog
+				sources = sources,
+				-- TODO: Avoid hard coding these boolean
+				on_attach = on_ls_attach_meta(true, false)
+			}
+			return opts
+		end
 	},
 	{
 		"folke/lazydev.nvim",
