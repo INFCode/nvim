@@ -75,5 +75,9 @@ return {
 	},
 	{
 		"MunifTanjim/nui.nvim"
-	}
+	},
+	{
+		'echasnovski/mini.icons',
+		version = false,
+	},
 }
