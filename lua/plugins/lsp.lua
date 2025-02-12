@@ -1,260 +1,260 @@
 local on_ls_attach_meta = function(enable_inlay_hint, enable_codelens)
-	local on_attach = function(client, bufnr)
-		-- inlay hint
-		if enable_inlay_hint and client.supports_method("textDocument/inlayHint", { bufnr = bufnr }) then
-			vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-		end
-		-- code lens
-		if enable_codelens and client.supports_method("textDocument/codeLens", { bufnr = bufnr }) then
-			vim.lsp.codelens.refresh({ bufnr = bufnr })
-			vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
-				buffer = bufnr,
-				callback = function()
-					vim.lsp.codelens.refresh({ bufnr = bufnr })
-				end,
-			})
-		end
-		-- format on save
-		if client.supports_method("textDocument/formatting") then
-			vim.api.nvim_create_autocmd("BufWritePre", {
-				buffer = bufnr,
-				callback = function()
-					vim.lsp.buf.format({ async = false, id = client.id })
-				end,
-			})
-		end
-	end
-	return on_attach
+    local on_attach = function(client, bufnr)
+        -- inlay hint
+        if enable_inlay_hint and client.supports_method("textDocument/inlayHint", { bufnr = bufnr }) then
+            vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+        end
+        -- code lens
+        if enable_codelens and client.supports_method("textDocument/codeLens", { bufnr = bufnr }) then
+            vim.lsp.codelens.refresh({ bufnr = bufnr })
+            vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
+                buffer = bufnr,
+                callback = function()
+                    vim.lsp.codelens.refresh({ bufnr = bufnr })
+                end,
+            })
+        end
+        -- format on save
+        if client.supports_method("textDocument/formatting") then
+            vim.api.nvim_create_autocmd("BufWritePre", {
+                buffer = bufnr,
+                callback = function()
+                    vim.lsp.buf.format({ async = false, id = client.id })
+                end,
+            })
+        end
+    end
+    return on_attach
 end
 
 return {
-	{
-		"neovim/nvim-lspconfig",
-		dependencies = {
-			"mason-lspconfig.nvim",
-			"nui.nvim"
-		},
-		opts = {
-			capabilities = {},
-			codelens = {
-				enable = true
-			},
-			inlay_hint = {
-				enable = false
-			},
-			servers = {
-				lua_ls = {
-					settings = {
-						Lua = {
-							codeLens = {
-								enable = true,
-							},
-							hint = {
-								enable = false,
-							}
-						}
-					}
-				},
-				jsonls = {
-				},
-				rust_analyzer = {
-					settings = {
-						['rust-analyzer'] = {},
-					},
-				},
-				basedpyright = {
-					handlers = {
-						['textDocument/publishDiagnostics'] = function() end
-					}
-				}
-			},
-			keymap = function(env)
-				local opts = { buffer = env.buf }
-				local setmap = vim.keymap.set
+    {
+        "neovim/nvim-lspconfig",
+        dependencies = {
+            "mason-lspconfig.nvim",
+            "nui.nvim"
+        },
+        opts = {
+            capabilities = {},
+            codelens = {
+                enable = true
+            },
+            inlay_hint = {
+                enable = false
+            },
+            servers = {
+                lua_ls = {
+                    settings = {
+                        Lua = {
+                            codeLens = {
+                                enable = true,
+                            },
+                            hint = {
+                                enable = false,
+                            }
+                        }
+                    }
+                },
+                jsonls = {
+                },
+                rust_analyzer = {
+                    settings = {
+                        ['rust-analyzer'] = {},
+                    },
+                },
+                basedpyright = {
+                    handlers = {
+                        ['textDocument/publishDiagnostics'] = function() end
+                    }
+                }
+            },
+            keymap = function(env)
+                local opts = { buffer = env.buf }
+                local setmap = vim.keymap.set
 
-				local nui = require('nui.input')
-				local event = require('nui.utils.autocmd').event
+                local nui = require('nui.input')
+                local event = require('nui.utils.autocmd').event
 
-				-- create the window
-				local function rename_symbol()
-					local current_name = vim.fn.expand('<cword>')
-					local params = vim.lsp.util.make_position_params()
+                -- create the window
+                local function rename_symbol()
+                    local current_name = vim.fn.expand('<cword>')
+                    local params = vim.lsp.util.make_position_params()
 
-					local input = nui({
-						-- put the input box 1 row lower than current line
-						relative = 'cursor',
-						position = {
-							row = 2,
-							col = 0,
-						},
-						size = {
-							width = 20,
-							height = 1,
-						},
-						border = {
-							style = "rounded",
-							text = {
-								top = "[Rename]",
-								top_align = "center",
-							},
-						},
-						win_options = {
-							winhighlight = "Normal:Normal,FloatBoarder:SpecialChar",
-						}
-					}, {
-						prompt = "> ",
-						default_value = current_name,
-						on_submit = function(new_name)
-							if not new_name or #new_name == 0 or new_name == current_name then
-								return
-							end
-							params.newName = new_name
-							vim.lsp.buf.rename(new_name, nil)
-							vim.notify("Renamed " .. current_name .. " to " .. new_name)
-						end,
-					})
+                    local input = nui({
+                        -- put the input box 1 row lower than current line
+                        relative = 'cursor',
+                        position = {
+                            row = 2,
+                            col = 0,
+                        },
+                        size = {
+                            width = 20,
+                            height = 1,
+                        },
+                        border = {
+                            style = "rounded",
+                            text = {
+                                top = "[Rename]",
+                                top_align = "center",
+                            },
+                        },
+                        win_options = {
+                            winhighlight = "Normal:Normal,FloatBoarder:SpecialChar",
+                        }
+                    }, {
+                        prompt = "> ",
+                        default_value = current_name,
+                        on_submit = function(new_name)
+                            if not new_name or #new_name == 0 or new_name == current_name then
+                                return
+                            end
+                            params.newName = new_name
+                            vim.lsp.buf.rename(new_name, nil)
+                            vim.notify("Renamed " .. current_name .. " to " .. new_name)
+                        end,
+                    })
 
-					-- enable the input window
-					input:mount()
+                    -- enable the input window
+                    input:mount()
 
-					-- close when the cursor leaves or press esc in normal mode
-					input:on(event.BufLeave, input.input_props.on_close, { once = true })
-					input:map("n", "<esc>", input.input_props.on_close, { noremap = true })
-				end
+                    -- close when the cursor leaves or press esc in normal mode
+                    input:on(event.BufLeave, input.input_props.on_close, { once = true })
+                    input:map("n", "<esc>", input.input_props.on_close, { noremap = true })
+                end
 
-				setmap('n', 'gD', vim.lsp.buf.declaration, opts)
-				setmap('n', 'gd', vim.lsp.buf.definition, opts)
-				setmap('n', 'K', vim.lsp.buf.hover, opts)
-				setmap('n', 'gi', vim.lsp.buf.implementation, opts)
-				setmap('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-				setmap('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
-				setmap('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
-				setmap('n', '<leader>wl', function()
-					print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-				end, opts)
-				setmap('n', '<leader>D', vim.lsp.buf.type_definition, opts)
-				setmap('n', '<leader>rn', rename_symbol, opts)
-				setmap({ 'n', 'v' }, '<leader>aw', vim.lsp.buf.code_action, opts)
-				setmap('n', 'gr', vim.lsp.buf.references, opts)
-				setmap('n', '<leader>F', function()
-					vim.lsp.buf.format { async = true }
-				end, opts)
-				setmap('n', '<leader>fc', function()
-					vim.lsp.buf.code_action({
-						filter = function(a) return a.isPreferred end,
-						apply = true
-					})
-				end, opts)
-			end,
-		},
-		config = function(_, opts)
-			vim.api.nvim_create_autocmd('LspAttach', {
-				group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-				callback = function(env)
-					-- key mappings
-					opts.keymap(env)
-				end
-			})
+                setmap('n', 'gD', vim.lsp.buf.declaration, opts)
+                setmap('n', 'gd', vim.lsp.buf.definition, opts)
+                setmap('n', 'K', vim.lsp.buf.hover, opts)
+                setmap('n', 'gi', vim.lsp.buf.implementation, opts)
+                setmap('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+                setmap('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
+                setmap('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
+                setmap('n', '<leader>wl', function()
+                    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+                end, opts)
+                setmap('n', '<leader>D', vim.lsp.buf.type_definition, opts)
+                setmap('n', '<leader>rn', rename_symbol, opts)
+                setmap({ 'n', 'v' }, '<leader>aw', vim.lsp.buf.code_action, opts)
+                setmap('n', 'gr', vim.lsp.buf.references, opts)
+                setmap('n', '<leader>F', function()
+                    vim.lsp.buf.format { async = true }
+                end, opts)
+                setmap('n', '<leader>fc', function()
+                    vim.lsp.buf.code_action({
+                        filter = function(a) return a.isPreferred end,
+                        apply = true
+                    })
+                end, opts)
+            end,
+        },
+        config = function(_, opts)
+            vim.api.nvim_create_autocmd('LspAttach', {
+                group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+                callback = function(env)
+                    -- key mappings
+                    opts.keymap(env)
+                end
+            })
 
-			local on_ls_attach = on_ls_attach_meta(opts.inlay_hint.enable, opts.codelens.enable)
+            local on_ls_attach = on_ls_attach_meta(opts.inlay_hint.enable, opts.codelens.enable)
 
-			-- load all servers
-			local servers = opts.servers
+            -- load all servers
+            local servers = opts.servers
 
-			local have_cmp, cmp = pcall(require, "cmp_nvim_lsp")
-			local capabilities = vim.tbl_deep_extend(
-				"force",
-				{},
-				vim.lsp.protocol.make_client_capabilities(),
-				have_cmp and cmp.default_capabilities() or {},
-				opts.capabilities or {}
-			)
+            local have_cmp, cmp = pcall(require, "cmp_nvim_lsp")
+            local capabilities = vim.tbl_deep_extend(
+                "force",
+                {},
+                vim.lsp.protocol.make_client_capabilities(),
+                have_cmp and cmp.default_capabilities() or {},
+                opts.capabilities or {}
+            )
 
-			local mlsp = require("mason-lspconfig")
-			local all_mlsp_servers = vim.tbl_keys(require("mason-lspconfig.mappings.server").lspconfig_to_package)
+            local mlsp = require("mason-lspconfig")
+            local all_mlsp_servers = vim.tbl_keys(require("mason-lspconfig.mappings.server").lspconfig_to_package)
 
-			local function setup(server)
-				require("lspconfig")[server].setup({
-					settings = servers[server].settings or {},
-					capabilities = capabilities,
-					on_attach = function(client, bufnr)
-						if type(servers[server].on_attach) == "function" then
-							servers[server].on_attach(client, bufnr)
-						end
-						on_ls_attach(client, bufnr)
-					end,
-					handlers = servers[server].handlers or {}
-				})
-			end
+            local function setup(server)
+                require("lspconfig")[server].setup({
+                    settings = servers[server].settings or {},
+                    capabilities = capabilities,
+                    on_attach = function(client, bufnr)
+                        if type(servers[server].on_attach) == "function" then
+                            servers[server].on_attach(client, bufnr)
+                        end
+                        on_ls_attach(client, bufnr)
+                    end,
+                    handlers = servers[server].handlers or {}
+                })
+            end
 
-			local ensure_installed = {}
-			for server, server_opts in pairs(servers) do
-				if server_opts then
-					server_opts = server_opts == true and {} or server_opts
-					-- run manual setup if mason is false or if this is a server that cannot be installed with mason-lspconfig
-					if server_opts.mason == false or not vim.tbl_contains(all_mlsp_servers, server) then
-						setup(server)
-					elseif server_opts.enabled ~= false then
-						ensure_installed[#ensure_installed + 1] = server
-					end
-				end
-			end
+            local ensure_installed = {}
+            for server, server_opts in pairs(servers) do
+                if server_opts then
+                    server_opts = server_opts == true and {} or server_opts
+                    -- run manual setup if mason is false or if this is a server that cannot be installed with mason-lspconfig
+                    if server_opts.mason == false or not vim.tbl_contains(all_mlsp_servers, server) then
+                        setup(server)
+                    elseif server_opts.enabled ~= false then
+                        ensure_installed[#ensure_installed + 1] = server
+                    end
+                end
+            end
 
-			mlsp.setup({
-				ensure_installed = ensure_installed,
-				automatic_installation = false,
-				handlers = { setup },
-			})
-		end
-	},
-	{
-		"williamboman/mason-lspconfig.nvim",
-		dependencies = {
-			"williamboman/mason.nvim",
-		}
-	},
-	{
-		"williamboman/mason.nvim",
-		opts = {} -- Tell lazy.nvim to run require("mason").setup() for me
-	},
-	{
-		-- LSP hooks to make custom LS from non-LS tools
-		"nvimtools/none-ls.nvim",
-		dependencies = {
-			"nvimtools/none-ls-extras.nvim",
-			"nvim-lua/plenary.nvim"
-		},
-		opts = function()
-			local null_ls = require("null-ls")
-			-- Sources of fake LS
-			local sources = {
-				-- ruff autofix by ruff check --fix
-				require("none-ls.formatting.ruff").with({ extra_args = { "--extend-select", "I" } }),
-				-- ruff formatter
-				require("none-ls.formatting.ruff_format"),
-				-- ruff diagnostics
-				require("none-ls.diagnostics.ruff"),
-			}
+            mlsp.setup({
+                ensure_installed = ensure_installed,
+                automatic_installation = false,
+                handlers = { setup },
+            })
+        end
+    },
+    {
+        "williamboman/mason-lspconfig.nvim",
+        dependencies = {
+            "williamboman/mason.nvim",
+        }
+    },
+    {
+        "williamboman/mason.nvim",
+        opts = {} -- Tell lazy.nvim to run require("mason").setup() for me
+    },
+    {
+        -- LSP hooks to make custom LS from non-LS tools
+        "nvimtools/none-ls.nvim",
+        dependencies = {
+            "nvimtools/none-ls-extras.nvim",
+            "nvim-lua/plenary.nvim"
+        },
+        opts = function()
+            local null_ls = require("null-ls")
+            -- Sources of fake LS
+            local sources = {
+                -- ruff autofix by ruff check --fix
+                require("none-ls.formatting.ruff").with({ extra_args = { "--extend-select", "I" } }),
+                -- ruff formatter
+                require("none-ls.formatting.ruff_format"),
+                -- ruff diagnostics
+                require("none-ls.diagnostics.ruff"),
+            }
 
-			local opts = {
-				debug = true, -- Inspect with :NullLsLog
-				sources = sources,
-				-- TODO: Avoid hard coding these boolean
-				on_attach = on_ls_attach_meta(true, false)
-			}
-			return opts
-		end
-	},
-	{
-		"folke/lazydev.nvim",
-		ft = "lua", -- only load on lua files
-		opts = {
-			library = {
-				-- See the configuration section for more details
-				-- Load luvit types when the `vim.uv` word is found
-				{ path = "luvit-meta/library", words = { "vim%.uv" } },
-			},
-		},
-	},
-	{ "Bilal2453/luvit-meta", lazy = true }, -- optional `vim.uv` typings
+            local opts = {
+                debug = true, -- Inspect with :NullLsLog
+                sources = sources,
+                -- TODO: Avoid hard coding these boolean
+                on_attach = on_ls_attach_meta(true, false)
+            }
+            return opts
+        end
+    },
+    {
+        "folke/lazydev.nvim",
+        ft = "lua", -- only load on lua files
+        opts = {
+            library = {
+                -- See the configuration section for more details
+                -- Load luvit types when the `vim.uv` word is found
+                { path = "luvit-meta/library", words = { "vim%.uv" } },
+            },
+        },
+    },
+    { "Bilal2453/luvit-meta", lazy = true }, -- optional `vim.uv` typings
 }

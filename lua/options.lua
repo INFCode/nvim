@@ -34,7 +34,8 @@ set.splitright = true -- Force all vertical splits to go to the right of current
 set.timeoutlen = 300 -- Time to wait for a mapped sequence to complete (in milliseconds) (default: 1000)
 
 -- completion
-set.completeopt = 'menu,preview'       -- Set completeopt to have a better completion experience (default: 'menu,preview')
+set.completeopt =
+'menu,preview'                         -- Set completeopt to have a better completion experience (default: 'menu,preview')
 set.formatoptions:remove({ 'r', 'o' }) -- Don't insert the current comment leader automatically for auto-wrapping comments using, hitting <Enter> in insert mode, or hitting 'o' or 'O' in normal mode. (default: 'croql')
 
 -- clipboard
