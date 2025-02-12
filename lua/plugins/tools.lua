@@ -22,8 +22,10 @@ return {
                     },
                 }
             }
+        },
+        keys = {
+            { "<leader>nt", "<cmd>Neotree toggle<cr>", desc = "Toggle Neotree" }
         }
-
     },
     {
         "preservim/vim-pencil",
