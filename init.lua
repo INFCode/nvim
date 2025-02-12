@@ -5,6 +5,6 @@ else
     require("core")
     require("utils")
     require("diagnostic").setup()
-    require("deps")
+    require("lazynvim")
     require("terminal").setup()
 end
