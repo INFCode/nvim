@@ -12,11 +12,20 @@ function M.set_float_autocmd()
     vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
         pattern = "*",
         callback = function()
-            local opts = {
-                focusable = false,
-                close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-            }
-            vim.diagnostic.open_float(opts, { focus = false })
+            local current_cursor = vim.api.nvim_win_get_cursor(0)
+            local success, value = pcall(vim.api.nvim_win_get_var, 0, "diagnostics_last_cursor_pos")
+            local last_popup_cursor = success and value or { nil, nil }
+
+            -- Show the popup diagnostics window,
+            -- but only once for the current cursor location (unless moved afterwards).
+            if not (current_cursor[1] == last_popup_cursor[1] and current_cursor[2] == last_popup_cursor[2]) then
+                vim.api.nvim_win_set_var(0, "diagnostics_last_cursor_pos", current_cursor)
+                local opts = {
+                    focusable = false,
+                    close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+                }
+                vim.diagnostic.open_float(opts, { focus = false })
+            end
         end,
         group = group
     })
