@@ -8,6 +8,7 @@ return {
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-cmdline",
             "hrsh7th/cmp-calc",
+            "yetone/avante.nvim",
             {
                 "garymjr/nvim-snippets",
                 opts = {
@@ -50,7 +51,7 @@ return {
                     end, { 'i', 's' }),
                     ['<C-CR>'] = cmp.mapping.complete(),
                     ['<C-e>'] = cmp.mapping.abort(),
-                    ['<CR>'] = cmp.mapping.confirm(),
+                    ['<Space>'] = cmp.mapping.confirm(),
                     ['<Tab>'] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
@@ -75,11 +76,13 @@ return {
                     )
                 }),
                 sources = cmp.config.sources({
+                    { name = 'avante_commands' },
+                    { name = 'avante_mentions' },
                     { name = 'nvim_lsp' },
-                    { name = 'snippets', max_item_count = 5 },
-                    { name = 'lazydev',  group_index = 0 },
+                    { name = 'snippets',       max_item_count = 5 },
+                    { name = 'lazydev',        group_index = 0 },
                     --{ name = 'treesitter' },
-                    { name = 'path',     keyword_length = 1 },
+                    { name = 'path',           keyword_length = 1 },
                     { name = 'calc' },
                 }, {
                     { name = 'buffer' },
