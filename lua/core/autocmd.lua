@@ -17,3 +17,21 @@ vim.api.nvim_create_autocmd('BufReadPost', {
         end
     end,
 })
+
+-- for python, force use the 'neovim' environment in pyenv
+vim.api.nvim_create_autocmd({ "BufReadPre", "BufNewFile" }, {
+    pattern = "*.py",
+    callback = function()
+        if vim.g.python3_host_prog then
+            -- already set
+            return
+        end
+        local neovim_python = vim.fn.system("pyenv prefix neovim"):gsub("\n", "") .. "/bin/python3"
+
+        if vim.fn.executable(neovim_python) == 1 then
+            vim.g.python3_host_prog = neovim_python
+        else
+            print("Warning: pyenv 'neovim' environment not found! Ensure it exists and has pynvim installed.")
+        end
+    end,
+})
